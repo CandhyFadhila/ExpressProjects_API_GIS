@@ -1,51 +1,34 @@
-const rateLimit = require("express-rate-limit");
+const { rateLimit, ipKeyGenerator } = require("express-rate-limit");
 const WithoutDataResource = require("../resources/WithoutDataResource");
 const logger = require("../utils/logger");
 
-// Middleware untuk membatasi request
-const customThrottle = (maxAttempts = 5, decayMinutes = 1) => {
-  const decaySeconds = decayMinutes * 60;
+// Bikin sekali saat aplikasi di-start
+const limiter = rateLimit({
+  windowMs: 1 * 60 * 1000, // 1 menit
+  max: 10, // Maksimal 10 request per window
+  keyGenerator: ipKeyGenerator, // ✅ wajib untuk keamanan IPv6
+  standardHeaders: true,
+  legacyHeaders: false,
 
-  // Rate limiter
-  const limiter = rateLimit({
-    windowMs: decaySeconds * 1000, // Waktu decay dalam milidetik (misal: 1 menit = 60 detik x 1000)
-    max: maxAttempts, // Maksimum request yang diizinkan dalam window waktu
+  message: () => {
+    return new WithoutDataResource(
+      429,
+      "TOO_MANY_REQUESTS",
+      "Terlalu Banyak Permintaan",
+      "Anda terlalu banyak melakukan permintaan, coba lagi setelah beberapa saat."
+    ).toResponse();
+  },
 
-    message: (req) => {
-      // Menentukan pesan saat terlalu banyak permintaan
-      return new WithoutDataResource(
-        429, // HTTP Status Code: Too Many Requests
-        "TOO_MANY_REQUESTS",
-        "Terlalu Banyak Permintaan",
-        `Anda terlalu banyak melakukan permintaan, coba lagi setelah ${Math.ceil(
-          decaySeconds / 60
-        )} menit.`
-      ).toResponse();
-    },
-    keyGenerator: (req) => {
-      // Gunakan ID user atau IP untuk identifikasi pembatasan
-      return req.user ? req.user.id : req.ip + "|" + req.originalUrl;
-    },
-    handler: (req, res) => {
-      // Response ketika rate limit tercapai
-      const response = new WithoutDataResource(
-        429, // HTTP Status Code: Too Many Requests
-        "TOO_MANY_REQUESTS",
-        "Terlalu Banyak Permintaan",
-        `Anda terlalu banyak melakukan permintaan, coba lagi setelah ${Math.ceil(
-          decaySeconds / 60
-        )} menit.`
-      );
-      logger.warn(
-        `| RateLimiter | - Too many requests for user: ${
-          req.ip
-        }, at ${new Date().toISOString()}`
-      );
-      return res.status(429).json(response.toResponse());
-    },
-  });
+  handler: (req, res) => {
+    const response = new WithoutDataResource(
+      429,
+      "TOO_MANY_REQUESTS",
+      "Terlalu Banyak Permintaan",
+      "Anda terlalu banyak melakukan permintaan, coba lagi setelah beberapa saat."
+    );
+    logger.warn(`| RateLimiter | Too many requests from IP: ${req.ip}`);
+    res.status(429).json(response.toResponse());
+  },
+});
 
-  return limiter;
-};
-
-module.exports = customThrottle;
+module.exports = limiter;

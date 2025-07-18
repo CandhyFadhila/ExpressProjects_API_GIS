@@ -1,8 +1,18 @@
 const { body } = require("express-validator");
 
 exports.loginValidator = [
-  body("email").isEmail().withMessage("Silahkan masukkan email yang valid."),
+  body("email")
+    .notEmpty()
+    .withMessage("Email tidak boleh kosong.")
+    .bail()
+    .isEmail()
+    .withMessage(
+      "Silahkan masukkan email yang valid, bisa berupa @gmail atau yang lain."
+    ),
   body("password")
-    .isLength({ min: 4 })
-    .withMessage("Password minimum 4 karakter."),
+    .notEmpty()
+    .withMessage("Password tidak boleh kosong.")
+    .bail()
+    .isLength({ min: 8 })
+    .withMessage("Password minimal terdiri dari 8 karakter."),
 ];
