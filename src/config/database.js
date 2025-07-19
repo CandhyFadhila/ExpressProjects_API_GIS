@@ -5,7 +5,7 @@ const { Pool } = require("pg");
 const pool = new Pool({
   user: "postgres", // Username database
   host: "localhost", // Server database
-  database: "bpn-gis", // Nama database
+  database: "gis_bpn", // Nama database
   password: "super.admin", // Password PostgreSQL
   port: 5433, // Port default PostgreSQL
 });

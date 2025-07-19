@@ -17,6 +17,25 @@ app.get("/", (req, res) => {
   res.json({ message: "Welcome to the API GIS!" });
 });
 
+// Cek db
+app.get("/check-db", async (req, res) => {
+  try {
+    const result = await pool.query("SELECT NOW()");
+    res.json({
+      status: "success",
+      message: "Koneksi database berhasil.",
+      server_time: result.rows[0].now,
+    });
+  } catch (error) {
+    console.error("DB Connection Error:", error.message);
+    res.status(500).json({
+      status: "error",
+      message: "Gagal terhubung ke database.",
+      error: error.message,
+    });
+  }
+});
+
 // Route API
 app.use("/api", authRoutes);
 
