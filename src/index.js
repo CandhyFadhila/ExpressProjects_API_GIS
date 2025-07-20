@@ -4,6 +4,7 @@ const cors = require("cors");
 const morgan = require("morgan");
 const pool = require("./config/database");
 const authRoutes = require("./routes/authRoutes");
+const wmsRoutes = require("./routes/wmsRoutes");
 
 const app = express();
 
@@ -38,6 +39,9 @@ app.get("/check-db", async (req, res) => {
 
 // Route API
 app.use("/api", authRoutes);
+
+// Route WMS
+app.use("/api/public-request", wmsRoutes);
 
 // Jalankan server
 const PORT = process.env.PORT || 3000;
