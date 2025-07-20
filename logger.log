@@ -1,0 +1,39 @@
+{"level":"info","message":"| Auth | - Token expired for user with token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTc1MjkxMDQ5NywiZXhwIjoxNzUyOTk2ODk3fQ.kSThNCfxphP7xq6MfX4jK7prVZCP83VDiaR699sxJ9Y, at 2025-07-20T10:26:09.733Z","timestamp":"2025-07-20T10:26:09.734Z"}
+{"level":"info","message":"| Login | - Login success for email: studio.exium@gmail.com, at 2025-07-20T10:26:32.371Z","timestamp":"2025-07-20T10:26:32.371Z"}
+{"level":"info","message":"| uploadDocuments | - Success: MRrhz4RWyFHwEX8TszdACgoc0","timestamp":"2025-07-20T10:44:19.788Z"}
+{"level":"info","message":"| uploadDocuments | - Success: 0NCxhatep4a0BK2CtYN1atKum","timestamp":"2025-07-20T10:47:37.550Z"}
+{"level":"info","message":"| uploadDocuments | - Success: R0UXIFGWp4drfaOTDC9DO43zH","timestamp":"2025-07-20T10:47:37.555Z"}
+{"level":"info","message":"| uploadDocuments | - Success: rtfqKUzeV6s0jBeN9BKwPgZBK","timestamp":"2025-07-20T10:47:37.557Z"}
+{"level":"info","message":"| uploadDocuments | - Success: TTbrOOQ68a7NAP8XQPQW3G36i","timestamp":"2025-07-20T11:04:47.660Z"}
+{"level":"info","message":"| uploadDocuments | - Success: EuaJBkYkeVQni1FhqW81TLIV9","timestamp":"2025-07-20T11:04:47.663Z"}
+{"level":"info","message":"| uploadDocuments | - Success: 9MjcKDaZ5z0UXL2ks3T0UtgnB","timestamp":"2025-07-20T11:04:47.665Z"}
+{"level":"info","message":"| uploadDocuments | - Success: IJslPLQWKdw4jyfECbsZ8vdH9","timestamp":"2025-07-20T11:25:40.434Z"}
+{"level":"info","message":"| uploadDocuments | - Success: 6ImAze5Xo8ALZoL7WwvT3l8EU","timestamp":"2025-07-20T11:25:40.439Z"}
+{"level":"info","message":"| uploadDocuments | - Success: IgyK2w0gUN9Od120WGBBsokjS","timestamp":"2025-07-20T11:25:40.442Z"}
+{"level":"info","message":"| uploadDocuments | - Success: sGZ9roMVwNR0fCHgANzQXdeU3","timestamp":"2025-07-20T11:29:35.127Z"}
+{"level":"info","message":"| uploadDocuments | - Success: KfTYvX7MJROY7AdDlNlRZ8zqn","timestamp":"2025-07-20T11:29:35.132Z"}
+{"level":"info","message":"| uploadDocuments | - Success: 1etQGHvQGa0D3siIWKJMSsOb4","timestamp":"2025-07-20T11:29:35.135Z"}
+{"level":"info","message":"| uploadDocuments | - Success: cyWefCinXVFhdJCVZeuvweclL","timestamp":"2025-07-20T12:20:37.939Z"}
+{"level":"info","message":"| uploadDocuments | - Success: oXlSQ7MflHdQwHbH3PG18RlAO","timestamp":"2025-07-20T12:20:37.942Z"}
+{"level":"info","message":"| deleteDocuments | - Dokumen 1 berhasil dihapus.","timestamp":"2025-07-20T12:42:06.895Z"}
+{"level":"info","message":"| deleteDocuments | - Dokumen 2 berhasil dihapus.","timestamp":"2025-07-20T12:42:06.901Z"}
+{"level":"info","message":"| deleteDocuments | - Dokumen 3 berhasil dihapus.","timestamp":"2025-07-20T12:42:06.903Z"}
+{"level":"info","message":"| deleteDocuments | - Dokumen 4 berhasil dihapus.","timestamp":"2025-07-20T12:42:06.906Z"}
+{"level":"info","message":"| deleteDocuments | - Dokumen 5 berhasil dihapus.","timestamp":"2025-07-20T12:42:06.909Z"}
+{"level":"warn","message":"| deleteDocuments | - Dokumen ID 1 tidak ditemukan.","timestamp":"2025-07-20T12:44:02.669Z"}
+{"level":"warn","message":"| deleteDocuments | - Dokumen ID 2 tidak ditemukan.","timestamp":"2025-07-20T12:44:02.673Z"}
+{"level":"warn","message":"| deleteDocuments | - Dokumen ID 3 tidak ditemukan.","timestamp":"2025-07-20T12:44:02.674Z"}
+{"level":"warn","message":"| deleteDocuments | - Dokumen ID 4 tidak ditemukan.","timestamp":"2025-07-20T12:44:02.675Z"}
+{"level":"warn","message":"| deleteDocuments | - Dokumen ID 5 tidak ditemukan.","timestamp":"2025-07-20T12:44:02.676Z"}
+{"level":"warn","message":"| deleteDocuments | - Dokumen ID 1 tidak ditemukan.","timestamp":"2025-07-20T12:44:17.059Z"}
+{"level":"warn","message":"| deleteDocuments | - Dokumen ID 2 tidak ditemukan.","timestamp":"2025-07-20T12:44:17.064Z"}
+{"level":"warn","message":"| deleteDocuments | - Dokumen ID 3 tidak ditemukan.","timestamp":"2025-07-20T12:44:17.065Z"}
+{"level":"warn","message":"| deleteDocuments | - Dokumen ID 4 tidak ditemukan.","timestamp":"2025-07-20T12:44:17.066Z"}
+{"level":"warn","message":"| deleteDocuments | - Dokumen ID 5 tidak ditemukan.","timestamp":"2025-07-20T12:44:17.066Z"}
+{"level":"info","message":"| deleteDocuments | - Dokumen 6 berhasil dihapus.","timestamp":"2025-07-20T12:44:30.121Z"}
+{"level":"info","message":"| deleteDocuments | - Dokumen 7 berhasil dihapus.","timestamp":"2025-07-20T12:44:30.124Z"}
+{"level":"info","message":"| deleteDocuments | - Dokumen 8 berhasil dihapus.","timestamp":"2025-07-20T12:44:30.126Z"}
+{"level":"info","message":"| deleteDocuments | - Dokumen 9 berhasil dihapus.","timestamp":"2025-07-20T12:44:30.128Z"}
+{"level":"info","message":"| deleteDocuments | - Dokumen 10 berhasil dihapus.","timestamp":"2025-07-20T12:45:23.206Z"}
+{"level":"info","message":"| uploadDocuments | - Success: 7gavA9QmZ3xxZiPYBTCAupng2.png","timestamp":"2025-07-20T12:59:36.874Z"}
+{"level":"info","message":"| uploadDocuments | - Success: lxOKBNBfPseyZVydOGtTBtJdk.zip","timestamp":"2025-07-20T12:59:36.879Z"}
