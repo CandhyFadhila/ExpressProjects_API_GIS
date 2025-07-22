@@ -41,12 +41,12 @@ exports.getWMSImage = async (req, res) => {
     );
     return res.status(200).json(response.toResponse());
   } catch (error) {
-    logger.error(`| Get WMS Image | - Failed: ${error.message}`);
+    logger.error(`| WMS | - Error function getWMSImage: ${error.message}`);
     const response = new WithoutDataResource(
       500,
       "SERVER_ERROR",
-      "Login Gagal.",
-      "Terjadi kesalahan di server. Silakan coba lagi nanti."
+      "Server Sedang Error",
+      "Terjadi kesalahan pada sistem, silahkan coba lagi nanti atau hubungi admin."
     );
     res.status(500).json(response.toResponse());
   }

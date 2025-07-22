@@ -1,14 +1,19 @@
-// src/config/database.js
-const { Pool } = require("pg");
+const knex = require("knex");
 
-// Setup koneksi database PostgreSQL
-const pool = new Pool({
-  user: "postgres", // Username database
-  host: "localhost", // Server database
-  database: "gis_bpn", // Nama database
-  password: "super.admin", // Password PostgreSQL
-  port: 5433, // Port default PostgreSQL
+const db = knex({
+  client: "pg",
+  connection: {
+    host: "localhost",
+    port: 5433,
+    user: "postgres",
+    password: "super.admin",
+    database: "gis_bpn",
+  },
+  pool: {
+    min: 2,
+    max: 10,
+  },
+  acquireConnectionTimeout: 10000,
 });
 
-// Export koneksi untuk digunakan di file lain
-module.exports = pool;
+module.exports = db;

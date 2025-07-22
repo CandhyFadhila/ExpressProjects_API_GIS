@@ -2,11 +2,12 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
-const pool = require("./config/database");
+const knex = require("./config/database");
 const authRoutes = require("./routes/authRoutes");
 const wmsRoutes = require("./routes/wmsRoutes");
-const path = require('path');
+const path = require("path");
 const documentRoutes = require("./routes/documentRoutes");
+const workspaceRoutes = require("./routes/workspaceRoutes");
 
 const app = express();
 
@@ -23,7 +24,7 @@ app.get("/", (req, res) => {
 // Cek db
 app.get("/check-db", async (req, res) => {
   try {
-    const result = await pool.query("SELECT NOW()");
+    const result = await knex.raw("SELECT NOW()");
     res.json({
       status: "success",
       message: "Koneksi database berhasil.",
@@ -43,11 +44,14 @@ app.get("/check-db", async (req, res) => {
 app.use("/api", authRoutes);
 
 // Route WMS
-app.use("/api/public-request", wmsRoutes);
+app.use("/api/gis-bpn/public-request", wmsRoutes);
 
 // Route Documents
-app.use('/storage', express.static(path.join(__dirname, 'public', 'storage')));
-app.use("/api/documents", documentRoutes);
+app.use("/storage", express.static(path.join(__dirname, "public", "storage")));
+app.use("/api/gis-bpn/documents", documentRoutes);
+
+// Route Workspace
+app.use("/api/gis-bpn/workspaces", workspaceRoutes);
 
 // Jalankan server
 const PORT = process.env.PORT || 3000;

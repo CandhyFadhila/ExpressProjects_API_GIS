@@ -6,7 +6,7 @@ const nodemailer = require("nodemailer");
 const { blacklistToken } = require("../utils/tokenBlacklist");
 const { validationResult } = require("express-validator");
 const logger = require("../utils/logger");
-const pool = require("../config/database");
+const knex = require("../config/database");
 const redisClient = require("../config/redisClient");
 const WithDataResource = require("../resources/WithDataResource");
 const WithoutDataResource = require("../resources/WithoutDataResource");
@@ -30,11 +30,7 @@ exports.login = async (req, res) => {
 
   try {
     // Cek user berdasarkan email
-    const result = await pool.query("SELECT * FROM users WHERE email = $1", [
-      email,
-    ]);
-    const user = result.rows[0];
-
+    const user = await knex("users").where({ email }).first();
     if (!user) {
       logger.info(
         `| Login | - Invalid credentials for email: ${email}, at ${new Date().toISOString()}`
@@ -64,9 +60,9 @@ exports.login = async (req, res) => {
     }
 
     // Update last_login
-    await pool.query("UPDATE users SET last_login = NOW() WHERE id = $1", [
-      user.id,
-    ]);
+    await knex("users")
+      .where({ id: user.id })
+      .update({ last_login: knex.fn.now() });
 
     // Create JWT token
     const payload = { userId: user.id };
@@ -95,14 +91,12 @@ exports.login = async (req, res) => {
     );
     res.status(200).json(response.toResponse());
   } catch (error) {
-    logger.error(`| Login | - Server error: ${error.message}`, {
-      stack: error.stack,
-    });
+    logger.error(`| Auth | - Error function login: ${error.message}`);
     const response = new WithoutDataResource(
       500, // HTTP Status Code: Internal Server Error
       "SERVER_ERROR",
-      "Login Gagal.",
-      "Terjadi kesalahan di server. Silakan coba lagi nanti."
+      "Server Sedang Error",
+      "Terjadi kesalahan pada sistem, silahkan coba lagi nanti atau hubungi admin."
     );
     res.status(500).json(response.toResponse());
   }
@@ -114,10 +108,7 @@ exports.getUserInfo = async (req, res) => {
 
   try {
     // Ambil data user dari database berdasarkan userId
-    const userResult = await pool.query("SELECT * FROM users WHERE id = $1", [
-      userId,
-    ]);
-    const user = userResult.rows[0];
+    const user = await knex("users").where({ id: userId }).first();
 
     // Jika user tidak ditemukan
     if (!user) {
@@ -155,15 +146,12 @@ exports.getUserInfo = async (req, res) => {
     );
     res.status(200).json(response.toResponse());
   } catch (error) {
-    logger.error(
-      `| GetUserInfo | - Server error for userId: ${userId}, error: ${error.message}`,
-      { stack: error.stack }
-    );
+    logger.error(`| Auth | - Error function getUserInfo: ${error.message}`);
     const response = new WithoutDataResource(
       500, // HTTP Status Code: Internal Server Error
       "SERVER_ERROR",
-      "Gagal Mendapatkan Data",
-      "Terjadi kesalahan di server. Silakan coba lagi nanti."
+      "Server Sedang Error",
+      "Terjadi kesalahan pada sistem, silahkan coba lagi nanti atau hubungi admin."
     );
     res.status(500).json(response.toResponse());
   }
@@ -208,15 +196,12 @@ exports.logout = async (req, res) => {
     );
     res.status(200).json(response.toResponse());
   } catch (error) {
-    logger.error(
-      `| Logout | - Server error for userId: ${userId}, error: ${error.message}`,
-      { stack: error.stack }
-    );
+    logger.error(`| Auth | - Error function logout: ${error.message}`);
     const response = new WithoutDataResource(
       500, // HTTP Status Code: Internal Server Error
       "SERVER_ERROR",
-      "Logout Gagal.",
-      "Terjadi kesalahan di server. Silakan coba lagi nanti."
+      "Server Sedang Error",
+      "Terjadi kesalahan pada sistem, silahkan coba lagi nanti atau hubungi admin."
     );
     res.status(500).json(response.toResponse());
   }
@@ -237,11 +222,11 @@ exports.sendOTP = async (req, res) => {
   }
 
   try {
-    const result = await pool.query(
-      "SELECT id, name FROM users WHERE email = $1",
-      [email]
-    );
-    if (result.rows.length === 0) {
+    const user = await knex("users")
+      .select("id", "name")
+      .where({ email })
+      .first();
+    if (!user) {
       const response = new WithoutDataResource(
         404,
         "DATA_NOT_FOUND",
@@ -251,7 +236,6 @@ exports.sendOTP = async (req, res) => {
       return res.status(404).json(response.toResponse());
     }
 
-    const user = result.rows[0];
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     const key = `otp:${user.id}`;
     const hash = crypto.createHash("sha256").update(otp).digest("hex");
@@ -289,12 +273,12 @@ exports.sendOTP = async (req, res) => {
     );
     return res.status(200).json(response.toResponse());
   } catch (error) {
-    logger.error(`| Send OTP | - Failed: ${error.message}`);
+    logger.error(`| Auth | - Error function sendOTP: ${error.message}`);
     const response = new WithoutDataResource(
       500,
-      "OTP_SEND_FAILED",
-      "Gagal Mengirim OTP",
-      "Terjadi kesalahan saat mengirim OTP. Silakan coba lagi nanti."
+      "SERVER_ERROR",
+      "Server Sedang Error",
+      "Terjadi kesalahan pada sistem, silahkan coba lagi nanti atau hubungi admin."
     );
     return res.status(500).json(response.toResponse());
   }
@@ -305,12 +289,11 @@ exports.verifyOTP = async (req, res) => {
   const { email, otp } = req.body;
 
   try {
-    const result = await pool.query(
-      "SELECT id, email FROM users WHERE email = $1",
-      [email]
-    );
-
-    if (result.rows.length === 0) {
+    const user = await knex("users")
+      .select("id", "email")
+      .where({ email })
+      .first();
+    if (!user) {
       const response = new WithoutDataResource(
         404,
         "DATA_NOT_FOUND",
@@ -320,7 +303,6 @@ exports.verifyOTP = async (req, res) => {
       return res.status(404).json(response.toResponse());
     }
 
-    const user = result.rows[0];
     const key = `otp:${user.id}`;
     const storedHashedOtp = await redisClient.get(key);
 
@@ -358,12 +340,12 @@ exports.verifyOTP = async (req, res) => {
     );
     return res.status(200).json(response.toResponse());
   } catch (error) {
-    logger.error(`| Verify OTP | - Failed: ${error.message}`);
+    logger.error(`| Auth | - Error function verifyOTP: ${error.message}`);
     const response = new WithoutDataResource(
       500,
-      "VERIFY_FAILED",
-      "Gagal Verifikasi OTP",
-      "Terjadi kesalahan saat verifikasi OTP. Silakan coba lagi."
+      "SERVER_ERROR",
+      "Server Sedang Error",
+      "Terjadi kesalahan pada sistem, silahkan coba lagi nanti atau hubungi admin."
     );
     return res.status(500).json(response.toResponse());
   }
@@ -375,11 +357,11 @@ exports.resetPassword = async (req, res) => {
 
   try {
     // Cari user
-    const result = await pool.query(
-      "SELECT id, email FROM users WHERE email = $1",
-      [email]
-    );
-    if (result.rows.length === 0) {
+    const user = await knex("users")
+      .select("id", "email")
+      .where({ email })
+      .first();
+    if (!user) {
       const response = new WithoutDataResource(
         404,
         "DATA_NOT_FOUND",
@@ -389,7 +371,6 @@ exports.resetPassword = async (req, res) => {
       return res.status(404).json(response.toResponse());
     }
 
-    const user = result.rows[0];
     const key = `otp:${user.id}`;
     const storedHashedOtp = await redisClient.get(key);
 
@@ -420,10 +401,10 @@ exports.resetPassword = async (req, res) => {
 
     // Update password
     const hashedPassword = await bcrypt.hash(password, 10);
-    await pool.query(
-      "UPDATE users SET password = $1, last_change_password = NOW() WHERE id = $2",
-      [hashedPassword, user.id]
-    );
+    await knex("users").where({ id: user.id }).update({
+      password: hashedPassword,
+      last_change_password: knex.fn.now(),
+    });
 
     // Hapus OTP dari Redis
     await redisClient.del(key);
@@ -438,12 +419,12 @@ exports.resetPassword = async (req, res) => {
     );
     return res.status(200).json(response.toResponse());
   } catch (error) {
-    logger.error(`| Reset Password | - Failed: ${error.message}`);
+    logger.error(`| Auth | - Error function resetPassword: ${error.message}`);
     const response = new WithoutDataResource(
       500,
-      "RESET_FAILED",
-      "Gagal Reset Password",
-      "Terjadi kesalahan saat reset password. Silakan coba lagi nanti."
+      "SERVER_ERROR",
+      "Server Sedang Error",
+      "Terjadi kesalahan pada sistem, silahkan coba lagi nanti atau hubungi admin."
     );
     return res.status(500).json(response.toResponse());
   }

@@ -2,9 +2,8 @@ const fs = require("fs");
 const { v4: uuidv4 } = require("uuid");
 const path = require("path");
 const crypto = require("crypto");
-const pool = require("../config/database");
+const knex = require("../config/database");
 const logger = require("../utils/logger");
-const { create } = require("domain");
 
 function generateRandomString(length = 25) {
   return crypto
@@ -58,39 +57,32 @@ async function uploadDocuments(files, uploadedBy, verifiedBy = 1) {
       const fileSize = formatFileSize(file.size);
       const fileId = uuidv4();
 
-      const result = await pool.query(
-        `INSERT INTO documents (
-          id, uploaded_by, verified_by,
-          file_id, file_name, file_path,
-          file_url, file_mime_type, file_size
-        ) VALUES (
-          DEFAULT, $1, $2,
-          $3, $4, $5,
-          $6, $7, $8
-        ) RETURNING id, created_at, updated_at, deleted_at`,
-        [
-          uploadedBy,
-          verifiedBy,
-          fileId,
-          randomName,
-          relativePath,
-          fileUrl,
-          mimeType,
-          fileSize,
-        ]
-      );
+      const result = await knex("documents")
+        .insert({
+          uploaded_by: uploadedBy,
+          verified_by: verifiedBy,
+          file_id: fileId,
+          file_name: randomName,
+          file_path: relativePath,
+          file_url: fileUrl,
+          file_mime_type: mimeType,
+          file_size: fileSize,
+        })
+        .returning(["id", "created_at", "updated_at", "deleted_at"]);
+
+      const inserted = result[0];
 
       uploadedResults.push({
-        id: result.rows[0].id,
+        id: inserted.id,
         file_id: fileId,
         filename: randomName,
         file_path: relativePath,
         file_url: fileUrl,
         file_mime_type: mimeType,
         file_size: fileSize,
-        created_at: result.rows[0].created_at,
-        updated_at: result.rows[0].updated_at,
-        deleted_at: result.rows[0].deleted_at,
+        created_at: inserted.created_at,
+        updated_at: inserted.updated_at,
+        deleted_at: inserted.deleted_at,
       });
 
       logger.info(`| uploadDocuments | - Success: ${randomName}`);
@@ -109,12 +101,12 @@ async function deleteDocuments(documentIds = []) {
 
   for (const id of documentIds) {
     try {
-      const { rows } = await pool.query(
-        `SELECT file_path FROM documents WHERE id = $1 AND deleted_at IS NULL`,
-        [id]
-      );
-
-      if (rows.length === 0) {
+      const document = await knex("documents")
+        .select("file_path")
+        .where({ id })
+        .whereNull("deleted_at")
+        .first();
+      if (!document) {
         logger.warn(`| deleteDocuments | - Dokumen ID ${id} tidak ditemukan.`);
         continue;
       }
@@ -129,10 +121,7 @@ async function deleteDocuments(documentIds = []) {
         );
       }
 
-      await pool.query(
-        `UPDATE documents SET deleted_at = NOW() WHERE id = $1`,
-        [id]
-      );
+      await knex("documents").where({ id }).update({ deleted_at: knex.fn.now() });
 
       deleted.push(id);
       logger.info(`| deleteDocuments | - Dokumen ${id} berhasil dihapus.`);
