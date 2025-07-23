@@ -1,6 +1,0 @@
-{"level":"info","message":"| Auth | - Token valid for userId: 1, at 2025-07-23T04:20:41.189Z","timestamp":"2025-07-23T04:20:41.190Z"}
-{"level":"info","message":"| Get WMS Image | - Success to get WMS image.","timestamp":"2025-07-23T04:20:41.192Z"}
-{"level":"info","message":"| Auth | - Token valid for userId: 1, at 2025-07-23T04:24:19.711Z","timestamp":"2025-07-23T04:24:19.711Z"}
-{"level":"info","message":"| Auth | - Token valid for userId: 1, at 2025-07-23T04:24:29.329Z","timestamp":"2025-07-23T04:24:29.329Z"}
-{"level":"info","message":"| GetUserInfo | - User info fetched for userId: 1, at 2025-07-23T04:24:29.332Z","timestamp":"2025-07-23T04:24:29.332Z"}
-{"level":"info","message":"| Auth | - Token valid for userId: 1, at 2025-07-23T05:12:50.157Z","timestamp":"2025-07-23T05:12:50.158Z"}
