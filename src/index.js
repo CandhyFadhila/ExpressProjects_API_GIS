@@ -8,11 +8,13 @@ const wmsRoutes = require("./routes/wmsRoutes");
 const path = require("path");
 const documentRoutes = require("./routes/documentRoutes");
 const workspaceRoutes = require("./routes/workspaceRoutes");
+const workspaceLayerRoutes = require("./routes/workspaceLayerRoutes");
+const corsMiddleware = require("./middlewares/cors");
 
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(corsMiddleware);
 app.use(express.json());
 app.use(morgan("dev"));
 
@@ -31,7 +33,7 @@ app.get("/check-db", async (req, res) => {
       server_time: result.rows[0].now,
     });
   } catch (error) {
-    console.error("DB Connection Error:", error.message);
+    logger.error("DB Connection Error:", error.message);
     res.status(500).json({
       status: "error",
       message: "Gagal terhubung ke database.",
@@ -52,6 +54,9 @@ app.use("/api/gis-bpn/documents", documentRoutes);
 
 // Route Workspace
 app.use("/api/gis-bpn/workspaces", workspaceRoutes);
+
+// Route Workspace Layer
+app.use("/api/gis-bpn/workspace-layers", workspaceLayerRoutes);
 
 // Jalankan server
 const PORT = process.env.PORT || 3000;

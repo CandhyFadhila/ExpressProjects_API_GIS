@@ -29,6 +29,7 @@ exports.index = async (req, res) => {
         "w.created_at",
         "w.updated_at"
       )
+      .whereNull("w.deleted_at")
       .orderBy("w.created_at", "desc");
 
     // 2. Tambahkan search jika ada
@@ -173,11 +174,24 @@ exports.store = async (req, res) => {
       })
       .returning("*");
 
-    const response = new WithoutDataResource(
+    // 6. Insert default layer
+    const [newLayer] = await knex("workspace_layers")
+      .insert({
+        workspace_id: newWorkspace.id,
+        layer_name: "Default Layer",
+        description: "Layer bawaan saat workspace dibuat.",
+      })
+      .returning("*");
+
+    const response = new WithDataResource(
       201,
       "SUCCESS_CREATE_DATA",
       "Berhasil Menyimpan Data",
-      `Data workspace '${title}' berhasil ditambahkan.`
+      `Data workspace '${title}' berhasil ditambahkan beserta layer bawaannya.`,
+      {
+        workspace_id: newWorkspace.id,
+        workspace_layer_id: newLayer.id,
+      }
     );
     return res.status(201).json(response.toResponse());
   } catch (error) {
