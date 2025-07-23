@@ -11,7 +11,7 @@ const db = knex({
   },
   pool: {
     min: 2,
-    max: 10,
+    max: 50,
   },
   acquireConnectionTimeout: 10000,
 });
